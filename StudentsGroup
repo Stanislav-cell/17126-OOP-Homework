@@ -1,0 +1,33 @@
+import java.io.*;
+import java.util.*;
+
+public class StudentGroup {
+    public static void main(String[] args) {
+        try {
+            File studentsInfo = new File("StudentScore.txt");
+            Scanner scanner = new Scanner(System.in);
+            List<StudentsSuccess> students;
+            while (scanner.hasNextLine()){
+                String rowInFile = scanner.nextLine();
+                String[] rowInFileSplit = rowInFile.split(" ");
+                String number = rowInFileSplit[0];
+                String firstName = rowInFileSplit[1];
+                String lastName = rowInFileSplit[2];
+                String fullName = firstName + " " + lastName;
+                double grade = Double.parseDouble(rowInFileSplit[3]);
+                StudentsSuccess s = new StudentsSuccess(number, fullName, grade);
+                students.add(s);
+            }
+            Comparator<StudentsSuccess> comp = Comparator.comparingInt((StudentsSuccess s) -> (int) s.getAverageSuccess());
+            Collections.sort(students, comp);
+            System.out.println("Lowest average success: " + students.get(0));
+            System.out.println("Highest average success: " + students.get(students.size() - 1));
+
+            double sum = 0;
+            for (int i = 0; i < students.size(); i++){
+            }
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+}
