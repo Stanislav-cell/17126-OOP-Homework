@@ -1,0 +1,51 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        try {
+            File inputFile = new File("data.txt");
+            Scanner reader = new Scanner(inputFile);
+
+            File outputFile = new File("out.txt");
+            PrintWriter writer = new PrintWriter(outputFile);
+
+            ArrayList<Properties> properties = new ArrayList<Properties>();
+
+            while (reader.hasNextLine()) {
+                String name = reader.nextLine();
+                String address = reader.nextLine();
+                int number = Integer.parseInt(reader.nextLine());
+                double price = Double.parseDouble(reader.nextLine());
+
+                properties.add(new Properties(name, address, number, price));
+            }
+
+            int minPriceIndex = 0;
+
+            for (int i = 1; i < properties.size(); i++) {
+                if (properties.get(i).getPrice() < properties.get(minPriceIndex).getPrice()) {
+                    minPriceIndex = i;
+                }
+            }
+
+            System.out.println("Lower price: ");
+            System.out.println("Name: " + properties.get(minPriceIndex).getName());
+            System.out.println("Address: " + properties.get(minPriceIndex).getAddress());
+            System.out.println("Number: " + properties.get(minPriceIndex).getNumber());
+            System.out.println("Price: " + properties.get(minPriceIndex).getPrice() + " lv");
+
+            writer.println("Lower price: ");
+            writer.println("Name: " + properties.get(minPriceIndex).getName());
+            writer.println("Address: " + properties.get(minPriceIndex).getAddress());
+            writer.println("Number: " + properties.get(minPriceIndex).getNumber());
+            writer.println("Price: " + properties.get(minPriceIndex).getPrice() + " lv");
+
+            reader.close();
+            writer.close();
+
+        } catch (FileNotFoundException e) {
+            System.out.println("The file is not found.");
+        }
+    }
+}
