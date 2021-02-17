@@ -1,0 +1,4 @@
+@FunctionalInterface
+public interface DoubleMath {
+    double operation(double firstNumber, double secondNumber);
+}
