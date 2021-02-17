@@ -1,0 +1,47 @@
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class CalculatorTest {
+    private Calculator calculator;
+    private double firstNumber;
+    private double secondNumber;
+    private double result;
+
+    @BeforeAll
+    public void initTest() {
+        calculator = new Calculator();
+        firstNumber = 10;
+        secondNumber = 0;
+    }
+
+    @AfterAll
+    public void afterTest() {
+        calculator = null;
+    }
+
+    @Test
+    void testAddition() {
+        result = calculator.addition(firstNumber, secondNumber);
+        assertEquals(new Double(firstNumber), new Double(result));
+    }
+
+    @Test
+    void testSubtraction() {
+        result = calculator.subtraction(firstNumber, secondNumber);
+        assertEquals(new Double(firstNumber), new Double(result));
+    }
+
+    @Test
+    void testMultiplication() {
+        result = calculator.multiplication(firstNumber, secondNumber);
+        assertEquals(new Double(secondNumber), new Double(result));
+    }
+
+    @Test
+    void testDivision() {
+        calculator.division(8, 0);
+    }
+}
