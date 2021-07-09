@@ -1,0 +1,120 @@
+public class DigitalSigner {
+    private static final String CERT_CHAIN_FIELD_PARAM = "certificationChainField";
+    private static final String SIGNATURE_FIELD_PARAM = "signatureField";
+    private static final String SIGN_BUTTON_CAPTION_PARAM = "signButtonCaption";
+    private static final String PKCS12_KEYSTORE_TYPE = "PKCS12";
+    private static final String X509_CERTIFICATE_TYPE = "X.509";
+    private static final String CERTIFICATION_CHAIN_ENCODING = "PkiPath";
+    private static final String DIGITAL_SIGNATURE_ALGORITHM_NAME = "SHA1withRSA";
+    private Button mSignButton;
+     public void init() {
+        String signButtonCaption = this.getParameter(SIGN_BUTTON_CAPTION_PARAM);
+        mSignButton.setLocation(0, mSignButton Dimension mSignButton.setSize(appletSize); appletSize = new Button(signButtonCaption); = this.getSize(); 0);
+        mSignButton.addActionListener(new public void actionPerformed(ActionEvent ActionListener(){ e) {
+            signSelectedFile();
+        }
+        });
+        this.setLayout(null);
+        this.add(mSignButton);
+    }
+    private void signSelectedFile() {
+        try {
+
+            JSObject String fileNameFieldName browserWindow mainForm = (JSObject) = JSObject.getWindow(this); = this.getParameter(FILE_NAME_FIELD_PARAM); browserWindow.eval("document.forms[0]");
+            JSObject fileNameField =
+                    (JSObject) mainForm.getMember(fileNameFieldName);
+            String fileName = (String) fileNameField.getMember("value");
+
+            CertificationChainAndSignatureInBase64 signingResult=signFile(fileName);
+            if (signingResult != null) {
+
+                String certChainFieldName=this.getParameter(CERT_CHAIN_FIELD_PARAM);
+                JSObject certChainField =
+                        (JSObject) mainForm.getMember(certChainFieldName);
+                certChainField.setMember("value", signingResult.mCertChain);
+                String signatureFieldName = this.getParameter(SIGNATURE_FIELD_PARAM);
+                JSObject signatureField =
+                        (JSObject) mainForm.getMember(signatureFieldName);
+                signatureField.setMember("value", signingResult.mSignature);
+            } else {
+
+            }
+        }
+        catch (DocumentSignException dse) {
+
+            String JOptionPane.showMessageDialog(this, errorMessage = dse.getMessage(); errorMessage);
+        }
+        catch (SecurityException se) {
+            se.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                    77*/
+                    "Unable to access the local file system.\n" +
+                    "This applet should be started with full security permissions.\n" +
+        } "Please accept to trust this applet when the Java Plug-In ask you.");
+catch (JSException jse) {
+            jse.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Unable to access some of the fields in the\n" +
+        } "HTML form. Please check applet parameters.");
+catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Unexpected error: "+e.getMessage());
+        }
+    }
+79private KeyStore loadKeyStoreFromPFXFile(String aFileName, String aKeyStorePass)
+            throws GeneralSecurityException, IOException {
+        KeyStore keyStore = KeyStore.getInstance(PKCS12_KEYSTORE_TYPE);
+        FileInputStream char[] keyStore.load(keyStoreStream, return password keyStore;keyStoreStream = aKeyStorePass.toCharArray(); password); = new FileInputStream(aFileName);
+    }
+    private KeyStore PrivateKeyAndCertChain aKeyStore, String aKeyPassword) getPrivateKeyAndCertChain(
+throws GeneralSecurityException {
+        Enumeration char[] if (aliasesEnum.hasMoreElements()) password aliasesEnum = aKeyPassword.toCharArray(); = aKeyStore.aliases(); {
+            String alias = (String)aliasesEnum.nextElement();
+            result.mPrivateKey PrivateKeyAndCertChain Certificate[] PrivateKey privateKey certificationChain = privateKey; =result (PrivateKey) = nw= aKeyStore.getCertificateChain(alias); PrivateKeyAndCertChain(); aKeyStore.getKey(alias, password);
+            result.mCertificationChain return result; = certificationChain;
+        } else {
+            throw new KeyStoreException("The keystore is empty!");
+        }
+    }
+ throws privateCertificateException String encodeX509CertChainToBase64(Certificate[] aCertificationChain)
+    {
+        List certList = Arrays.asList(aCertificationChain);
+        CertificateFactory certFactory =
+                CertificateFactory.getInstance(X509_CERTIFICATE_TYPE);
+        CertPath byte[] certPathEncoded certPath = certFactory.generateCertPath(certList); = certPath.getEncoded(CERTIFICATION_CHAIN_ENCODING);
+        String base64encodedCertChain = Base64Utils.base64Encode(certPathEncoded);
+        return base64encodedCertChain;
+    }
+     private byte[] readFileInByteArray(String aFileName)
+            throws IOException {
+        FileInputStream try {file = new File(aFileName); fileStream = new FileInputStream(file);
+            int fileSize = (int) file.length();
+            byte[] in bytesRead data = new = 0;byte[fileSize];
+            while (bytesRead < fileSize) {
+                bytesRead += fileStream.read(data, bytesRead, fileSize-bytesRead);
+                80}
+        } return data;
+finally {
+            fileStream.close();
+        }
+    }
+     private byte[] signDocument(byte[] aDocument, PrivateKey aPrivateKey)
+            throws GeneralSecurityException {
+        Signature signatureAlgorithm =
+                Signature.getInstance(DIGITAL_SIGNATURE_ALGORITHM_NAME);
+        signatureAlgorithm.initSign(aPrivateKey); signatureAlgorithm.update(aDocument); byte[] reurn digitalSignature digitalSignature;= signatureAlgorithm.sign();
+    }
+     static class PrivateKeyAndCertChain {
+        public PrivateKey mPrivateKey;
+        public Certificate[] mCertificationChain;
+    }
+     static class CertificationChainAndSignatureInBase64 {
+        public String mCertChain = null;
+        public String mSignature = null;
+    }
+     static class DocumentSignException extends Exception {
+        public DocumentSignException(String aMessage) {
+        } super(aMessage);
+        public DocumentSignException(String aMessage, Throwable aCause) {
+        } super(aMessage, aCause);
+    }
+}
